@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Header from '../components/Header'
+import MDEditor from '../components/MDEditor'
 import Menu from '../components/Menu'
 import MenuNav from '../components/MenuNav'
 import SFooter from '../components/SFooter'
@@ -15,7 +15,7 @@ const Home: NextPage = () => {
       </Head>
       {/* <Header /> */}
       <main className={styles.main}>
-        <article className={styles.paralaxStyle} id='art01'></article>
+        <article className={styles.paralaxStyle} id='art01'><MDEditor /></article>
         <article className={styles.greenStyle}   id='art02'>Article Two</article>
         <article className={styles.paralaxStyle} id='art03'>Article Three</article>
         <article className={styles.whiteStyle}   id='art04'>Article Four</article>
