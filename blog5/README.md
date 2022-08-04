@@ -1,34 +1,57 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# weekly60
 
-## Getting Started
+React Typescript Nextjs web3 ipfs decentralized distributed linux onboarding learning sample
 
-First, run the development server:
+------
 
-```bash
-npm run dev
-# or
-yarn dev
+```
+npm i react-icons
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+<https://react-icons.github.io/react-icons/>
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+------
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Markdown Editor in React
 
-## Learn More
+<https://uiw.gitee.io/react-md-editor/#support-nextjs>
 
-To learn more about Next.js, take a look at the following resources:
+```
+npm install next-remove-imports
+npm install @uiw/react-md-editor@v3.6.0
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```tsx
+// next.config.js
+const removeImports = require('next-remove-imports')();
+module.exports = removeImports({});
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```tsx
+import '@uiw/react-md-editor/markdown-editor.css';
+import '@uiw/react-markdown-preview/markdown.css';
+import dynamic from 'next/dynamic';
+import { useState } from 'react';
+const MDE = dynamic(
+  () => import('@uiw/react-md-editor'),
+  { ssr: false }
+);
+const MDEditor = () => {
+  const [value, setValue] = useState<string | undefined>('*Edit content Here!!*');
+  return (
+    <div data-color-mode="dark" >
+      <MDE value={value} onChange={setValue}  />
+    </div>
+  );
+}
+export default MDEditor;
+```
 
-## Deploy on Vercel
+------
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+react playground in nextjs
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+<https://souporserious.com/build-your-own-code-playground/>
+
+------
