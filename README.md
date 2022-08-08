@@ -206,6 +206,68 @@ module.exports = {
 };
 ```
 
+-----
+> hardhat.config.ts Add Network and selection Account 0
+```tsx
+import 'hardhat-deploy';
+import '@nomiclabs/hardhat-ethers';
+import '@typechain/hardhat';
+import { HardhatUserConfig } from 'hardhat/config';
+/** @type import('hardhat/config').HardhatUserConfig */
+//module.exports = {
+//  solidity: "0.8.9",
+//};
+const config: HardhatUserConfig = {
+  defaultNetwork: "hardhat",
+  solidity: "0.8.9",
+  networks: {
+    hardhat: {
+      chainId: 31337,
+    },
+    localhost: {
+      chainId: 31337,
+    }
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0,
+    }
+  }
+}
+export default config;
+```
+
+> Node Hardhat execution, run tasks, then create accounts and network *This accounts are just for local development*
+```tsx
+npx hardhat node
+Nothing to compile
+No need to generate any newer typings.
+[Doing] Deploy Script task execute with npx hardhat deploy ( npx hardhat --help )
+ --- This file was touched to have Environment Config in place ;)
+> hardhat.config.ts
+```tsx
+import 'hardhat-deploy';
+import '@nomiclabs/hardhat-ethers';
+import '@typechain/hardhat';
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
+  solidity: "0.8.9",
+};
+```
+ --- 
+Started HTTP and WebSocket JSON-RPC server at http://127.0.0.1:8545/
+
+Accounts
+========
+
+WARNING: These accounts, and their private keys, are publicly known.
+Any funds sent to them on Mainnet or any other live network WILL BE LOST.
+
+Account #0: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 (10000 ETH)
+...
+```
+
+
 
 
 ------
