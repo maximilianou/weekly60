@@ -129,5 +129,87 @@ Done in 3.07s.
 ```
 
 
+```
+npm install -D typescript typechain ts-node @typechain/ethers-v5 @typechain/hardhat @types/chai @types/node
+```
+
+> hardhat.config.ts
+```tsx
+import 'hardhat-deploy';
+import '@nomiclabs/hardhat-ethers';
+import '@typechain/hardhat';
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
+  solidity: "0.8.9",
+};
+```
+
+> This command will show deploy because /deploy/<tasks> directory with each file a task to execute.
+```tsx
+npx hardhat --help
+...
+  deploy                Deploy contracts
+...
+
+```
+
+
+> Error ! Good to know
+```
+Compiled 38 Solidity files successfully
+An unexpected error occurred:
+
+Error: ERROR processing /home/debian/projects/weekly60/blog5/deploy/01-deploy-governor.ts:
+TypeError: deployScript.func is not a function
+```
+> Solution: export default deployGovernanceToken
+```tsx
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { DeployFunction } from 'hardhat-deploy/types'; 
+
+const deployGovernanceToken: DeployFunction = async (
+  hre: HardhatRuntimeEnvironment
+) => {
+  console.log(`[Doing] Deploy Script task execute with npx hardhat deploy ( npx hardhat --help )`);
+  console.log(" --- This file was touched to have Environment Config in place ;)");
+  console.log("> hardhat.config.ts");
+  console.log("```tsx");
+  console.log("import 'hardhat-deploy';");
+  console.log("import '@nomiclabs/hardhat-ethers';");
+  console.log("import '@typechain/hardhat';");
+  console.log("/** @type import('hardhat/config').HardhatUserConfig */");
+  console.log("module.exports = {");
+  console.log('  solidity: "0.8.9",');
+  console.log("};");
+  console.log("```");
+  console.log(" --- ");
+};
+
+export default deployGovernanceToken;
+```
+
+> OK executed deploy task over hardhat 
+```tsx
+npx hardhat deploy 
+Nothing to compile
+No need to generate any newer typings.
+[Doing] Deploy Script task execute with npx hardhat deploy ( npx hardhat --help )
+ --- This file was touched to have Environment Config in place ;)
+> hardhat.config.ts
+
+import 'hardhat-deploy';
+import '@nomiclabs/hardhat-ethers';
+import '@typechain/hardhat';
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
+  solidity: "0.8.9",
+};
+```
+
+
+
+------
+REFERENCES: Patrick Collins <https://www.youtube.com/watch?v=AhJtmUqhAqg>
+
 -------
 
