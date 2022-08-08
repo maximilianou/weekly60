@@ -245,7 +245,6 @@ No need to generate any newer typings.
 [Doing] Deploy Script task execute with npx hardhat deploy ( npx hardhat --help )
  --- This file was touched to have Environment Config in place ;)
 > hardhat.config.ts
-```tsx
 import 'hardhat-deploy';
 import '@nomiclabs/hardhat-ethers';
 import '@typechain/hardhat';
@@ -253,7 +252,6 @@ import '@typechain/hardhat';
 module.exports = {
   solidity: "0.8.9",
 };
-```
  --- 
 Started HTTP and WebSocket JSON-RPC server at http://127.0.0.1:8545/
 
@@ -266,6 +264,68 @@ Any funds sent to them on Mainnet or any other live network WILL BE LOST.
 Account #0: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 (10000 ETH)
 ...
 ```
+
+---------
+
+> deploy/01-deploy-governor.ts
+```tsx
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { DeployFunction } from 'hardhat-deploy/types'; 
+
+const deployGovernanceToken: DeployFunction = async (
+  hre: HardhatRuntimeEnvironment
+) => {
+  console.log(`[Doing] Deploy Script task execute with npx hardhat deploy ( npx hardhat --help )`);
+  console.log(" --- This file was touched to have Environment Config in place ;)");
+  console.log("> hardhat.config.ts");
+  console.log("import 'hardhat-deploy';");
+  console.log("import '@nomiclabs/hardhat-ethers';");
+  console.log("import '@typechain/hardhat';");
+  console.log("/** @type import('hardhat/config').HardhatUserConfig */");
+  console.log("module.exports = {");
+  console.log('  solidity: "0.8.9",');
+  console.log("};");
+  console.log(" --- ");
+  const { getNamedAccounts, deployments, network } = hre;
+  const { deploy, log } = deployments;
+  const { deployer } = await getNamedAccounts();
+  log("Deploying Govenance Token...");
+  const governanceToken = await deploy("GovernanceToken",{
+    from: deployer,
+    args: [],
+    log: true,
+  });
+  // verify
+  log(`Deployed governance token to address: ${governanceToken.address}`);
+};
+export default deployGovernanceToken;
+```
+
+> Successfuly deployed! and address of deployed contract
+```tsx
+ npx hardhat deploy
+Nothing to compile
+No need to generate any newer typings.
+[Doing] Deploy Script task execute with npx hardhat deploy ( npx hardhat --help )
+ --- This file was touched to have Environment Config in place ;)
+> hardhat.config.ts
+
+import 'hardhat-deploy';
+import '@nomiclabs/hardhat-ethers';
+import '@typechain/hardhat';
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
+  solidity: "0.8.9",
+};
+
+ --- 
+Deploying Govenance Token...
+deploying "GovernanceToken" (tx: 0xc45413a5060243c08fb5576746a2647ae92a39bfa5c523dfaa016ec504a2caa7)...: deployed at 0x5FbDB2315678afecb367f032d93F642f64180aa3 with 3326223 gas
+Deployed governance token to address: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+```
+
+------
+
 
 
 
