@@ -327,6 +327,53 @@ Deployed governance token to address: 0x5FbDB2315678afecb367f032d93F642f64180aa3
 ------
 
 
+> deploy/01-deploy-governor.ts - Create Delegate Function
+```tsx
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { DeployFunction } from 'hardhat-deploy/types'; 
+import { ethers } from 'hardhat';
+const deployGovernanceToken: DeployFunction = async (
+  hre: HardhatRuntimeEnvironment
+) => {
+  const { getNamedAccounts, deployments, network } = hre;
+  const { deploy, log } = deployments;
+  const { deployer } = await getNamedAccounts();
+  log("Deploying Govenance Token...");
+  const governanceToken = await deploy("GovernanceToken",{
+    from: deployer,
+    args: [],
+    log: true,
+  });
+  // verify
+  log(`Deployed governance token to address: ${governanceToken.address}`);
+
+  await delgate(governanceToken.address, deployer);
+  log(`Delegated!`);
+};
+const delgate = async (governanceTokenAddress: string, delgatedAccount: string) => {
+  const governanceToken = await ethers.getContractAt(
+    "GovernanceToken", governanceTokenAddress
+  );
+  const tx = await governanceToken.delegate( delgatedAccount );
+  await tx.wait(1);
+  console.log(
+    `Checkpoints ${await governanceToken.numCheckpoints(delgatedAccount)}`
+  );
+}
+export default deployGovernanceToken;
+```
+> Ok execute 
+```tsx
+npx hardhat deploy
+Nothing to compile
+No need to generate any newer typings.
+Deploying Govenance Token...
+deploying "GovernanceToken" (tx: 0xc45413a5060243c08fb5576746a2647ae92a39bfa5c523dfaa016ec504a2caa7)...: deployed at 0x5FbDB2315678afecb367f032d93F642f64180aa3 with 3326223 gas
+Deployed governance token to address: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+Checkpoints 1
+Delegated!
+```
+------
 
 
 
