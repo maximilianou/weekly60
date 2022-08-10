@@ -1,3 +1,4 @@
+// hardhat.config.ts
 import 'hardhat-deploy';
 import '@nomiclabs/hardhat-ethers';
 import '@typechain/hardhat';
@@ -12,16 +13,17 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       chainId: 31337,
+      allowUnlimitedContractSize: true
     },
     localhost: {
       chainId: 31337,
-    }
+      allowUnlimitedContractSize: true
+    },
   },
   namedAccounts: {
     deployer: {
       default: 0,
     }
-  }
+  },
 }
-
 export default config;
