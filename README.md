@@ -594,6 +594,21 @@ Deploying governor..
 deploying "GovernorContract" (tx: 0xeeda6d0679ee1e7b2409823834b7ae5f5ccf98fdb8ea3d223a2c369b97906e74)...: deployed at 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9 with 6193548 gas
 ```
 
+----
+
+> Here I have a Problem, address === address in some place is different
+> 0xa513E6E4b8f2a923D98304ec87F64353C4D5C853 === 0xa513e6e4b8f2a923d98304ec87f64353c4d5c853
+> InvalidInputError: unknown account 0xa513e6e4b8f2a923d98304ec87f64353c4d5c853
+```
+Deploying Box...
+deploying "Box" (tx: 0xdb0cc86e3bc598908c15beb28ca9bfe0bb11e629d20177986100d7767dec7416)...: deployed at 0xa513E6E4b8f2a923D98304ec87F64353C4D5C853 with 398257 gas
+An unexpected error occurred:
+
+Error: ERROR processing /home/debian/projects/weekly60/blog5/deploy/05-deploy-box.ts:
+InvalidInputError: unknown account 0xa513e6e4b8f2a923d98304ec87f64353c4d5c853
+    at HardhatNode.getSignedTransaction (/home/debian/projects/weekly60/blog5/node_modules/hardhat/src/internal/hardhat-network/provider/node.ts:433:11)
+```
+
 
 
 ------
