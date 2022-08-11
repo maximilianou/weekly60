@@ -620,6 +620,205 @@ InvalidInputError: unknown account 0xa513e6e4b8f2a923d98304ec87f64353c4d5c853
 ---------
 
 
+
+> deploy/04-setup-governor-contract.ts
+```tsx
+// deploy/04-setup-governor-contract.ts
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { DeployFunction } from 'hardhat-deploy/types';
+import { ethers } from 'hardhat';
+import { ADDRESS_ZERO } from '../helper-hardhat-config';
+const setupContracts: DeployFunction = async (
+  hre: HardhatRuntimeEnvironment
+) => {
+  const { getNamedAccounts, deployments }  = hre;
+  const { deploy, log, get } = deployments;
+  const { deployer } = await getNamedAccounts();
+  const timeLock = await ethers.getContract("TimeLock", deployer);
+  const governor = await ethers.getContract("GovernorContract", deployer);
+  log("Setting up Roles..");
+  const proposerRole = await timeLock.PROPOSER_ROLE();
+  const executorRole = await timeLock.EXECUTOR_ROLE();
+  const adminRole = await timeLock.TIMELOCK_ADMIN_ROLE();
+  const proposerTx = await timeLock.grantRole(proposerRole, governor.address);
+  await proposerTx.wait(1);
+  const executorTx = await timeLock.grantRole(executorRole, ADDRESS_ZERO);
+  await executorTx.wait(1);
+  const revokeTx = await timeLock.revokeRole(adminRole, deployer);
+  await revokeTx.wait(1);
+}
+export default setupContracts;
+```
+
+> deploy/05-deploy-box.ts
+```tsx
+// deploy/05-deploy-box.ts
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { DeployFunction } from 'hardhat-deploy/types';
+import { ethers } from 'hardhat';
+const deployBox: DeployFunction = async (
+  hre: HardhatRuntimeEnvironment
+) => {
+  const { getNamedAccounts, deployments } = hre;
+  const { deploy, log, get } = deployments;
+  const { deployer } = await getNamedAccounts();
+  log("Deploying Box...");
+  const box = await deploy("Box", {
+    from: deployer,
+    args: [],
+    log: true,
+  });
+  const boxContract = await ethers.getContract("Box", box.address);
+  const timeLock = await ethers.getContract("TimeLock");
+  const transferOwnerTx = await boxContract.transferOwnership(
+    timeLock.address
+  );
+  await transferOwnerTx.wait(1);
+  log(`Deployed! Box Ownership timelock!!`);
+};
+export default deployBox;
+```
+> contracts/governance_standard/TimeLock.sol
+```tsx
+// contracts/governance_standard/TimeLock.sol
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.9;
+import "@openzeppelin/contracts/governance/TimelockController.sol";
+contract TimeLock is TimelockController {
+  constructor(
+    uint256 minDelay,
+    address[] memory proposers,
+    address[] memory executors
+  ) TimelockController(minDelay, proposers, executors) {
+  }
+}
+```
+> contracts/governance_standard/GovernorContract.sol
+```tsx
+// contracts/governance_standard/GovernorContract.sol
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.9;
+import "@openzeppelin/contracts/governance/Governor.sol";
+import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
+import "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
+import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
+import "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol";
+import "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol";
+contract GovernorContract is
+    Governor,
+    GovernorSettings,
+    GovernorCountingSimple,
+    GovernorVotes,
+    GovernorVotesQuorumFraction,
+    GovernorTimelockControl
+  {
+    constructor(
+      IVotes _token,
+      TimelockController _timelock,
+      uint256 _quorumPercentage,
+      uint256 _votingPeriod,
+      uint256 _votingDelay
+    )
+      Governor("GovernorContract")
+      GovernorSettings(
+        _votingDelay,
+        _votingPeriod,
+        0
+      )
+      GovernorVotes(_token)
+      GovernorVotesQuorumFraction(_quorumPercentage)
+      GovernorTimelockControl(_timelock)
+    { }
+    function votingDelay(
+    ) public view override(IGovernor, GovernorSettings) returns(uint256){
+      return super.votingDelay();
+    }
+    function votingPeriod(
+    ) public view override(IGovernor, GovernorSettings) returns(uint256){
+      return super.votingPeriod();
+    }
+    function quorum(uint256 blockNumber
+    ) public view override(IGovernor, GovernorVotesQuorumFraction) returns(uint256){
+      return super.quorum(blockNumber);
+    }
+    function getVotes(address account, uint256 blockNumber
+    ) public view override(IGovernor, Governor) returns(uint256){
+      return super.getVotes(account, blockNumber);
+    }
+    function state(
+      uint256 proposalId
+      ) public view override(Governor, GovernorTimelockControl) returns(ProposalState) {
+      return super.state(proposalId);
+    }
+    function propose(
+      address[] memory targets,
+      uint256[] memory values,
+      bytes[] memory calldatas,
+      string memory description
+    ) public override(Governor, IGovernor) returns(uint256) {
+      return super.propose(targets, values, calldatas, description);
+    }
+    function proposalThreshold(      
+    ) public view override(Governor, GovernorSettings) returns(uint256) {
+      return super.proposalThreshold();
+    }
+    function _execute(
+      uint256 proposalId,
+      address[] memory targets,
+      uint256[] memory values,
+      bytes[] memory calldatas,
+      bytes32 descriptionHash
+    ) internal override(Governor, GovernorTimelockControl) {
+      super._execute(proposalId, targets, values, calldatas, descriptionHash);
+    }
+    function _cancel(
+      address[] memory targets,
+      uint256[] memory values,
+      bytes[] memory calldatas,
+      bytes32 descriptionHash
+    ) internal override(Governor, GovernorTimelockControl) returns(uint256) {
+      return super._cancel(targets, values, calldatas, descriptionHash);
+    }
+    function _executor(
+    ) internal view override(Governor, GovernorTimelockControl) returns (address){
+      return super._executor();
+    }
+    function supportsInterface(bytes4 interfaceId
+    ) public view override(Governor, GovernorTimelockControl) returns(bool){
+      return super.supportsInterface(interfaceId);
+    }
+}
+```
+> contracts/Box.sol
+```tsx
+// contracts/Box.sol
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.9;
+import "@openzeppelin/contracts/access/Ownable.sol";
+contract Box is Ownable {
+  uint256 private value;
+  // Emitted when the stored value changes
+  event ValueChanged(uint256 newValue);
+  // Stores a new value in the Instance of the Contract
+  function store(uint256 newValue) public onlyOwner {
+    value = newValue;
+    emit ValueChanged(newValue);
+  }
+  // Read the latest stored value in the Instance of the Contract
+  function retrieve() public view returns (uint256){
+    return value;
+  }
+}
+```
+-------------
+
+
+
+
+
+
+
+
 ------
 REFERENCES: Patrick Collins <https://www.youtube.com/watch?v=AhJtmUqhAqg>
 
