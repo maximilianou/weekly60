@@ -812,8 +812,36 @@ contract Box is Ownable {
 ```
 -------------
 
+> scripts/propose.ts
+```tsx
+// scripts/propose.ts
+// @ts-ignore
+import { ethers } from 'hardhat';
+import { NEW_STORE_VALUE, FUNC } from '../helper-hardhat-config';
+export async function propose(args: any[], functionToCall: string){
+  const governor = await ethers.getContract("GovernorContracts");
+  const box = await ethers.getContract("Box");
+  const encodedFunctionCall = box.interface.encodeFunctionData(
+    functionToCall,
+    args
+  );
+};
 
+propose([NEW_STORE_VALUE], FUNC)
+  .then( () => process.exit(0))
+  .catch( err => { 
+    console.error(err);
+    process.exit(-1);
+  });
+```
 
+```
+npx hardhat node
+```
+
+```
+npx hardhat run script/propose.ts --network localhost
+```
 
 
 
