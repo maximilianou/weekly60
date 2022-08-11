@@ -608,7 +608,16 @@ Error: ERROR processing /home/debian/projects/weekly60/blog5/deploy/05-deploy-bo
 InvalidInputError: unknown account 0xa513e6e4b8f2a923d98304ec87f64353c4d5c853
     at HardhatNode.getSignedTransaction (/home/debian/projects/weekly60/blog5/node_modules/hardhat/src/internal/hardhat-network/provider/node.ts:433:11)
 ```
+<https://docs.ethers.io/v5/api/utils/address/#utils-getAddress>
+>Address
+>
+>An Address is a DataHexString of 20 bytes (40 nibbles), with optional mixed case.
+>
+>If the case is mixed, it is a Checksum Address, which uses a specific pattern of uppercase and >lowercase letters within a given address to reduce the risk of errors introduced from typing an >address or cut and paste issues.
+>
+>All functions that return an Address will return a Checksum Address.
 
+---------
 
 
 ------
